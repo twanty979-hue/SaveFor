@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   PieChart, Sparkles, Coins, ShoppingBag, Home, Car, Zap, Building,
   Wifi, Smartphone, GraduationCap, Shield, Dumbbell, Tv, Music,
@@ -39,15 +39,22 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 
 
-export default function SummaryTab({
-  profile,
+export default function SummaryTab({ profile, onRequireAuth,
   transactions,
   categories
 }: {
   profile: { id: string },
+  onRequireAuth?: () => boolean,
   transactions: any[],
   categories: any[]
 }) {
+  
+  useEffect(() => {
+    if (onRequireAuth && profile.id === 'guest') {
+      onRequireAuth();
+    }
+  }, []);
+
   const [period, setPeriod] = useState<'this_month' | 'last_month' | '30_days' | 'all'>('this_month')
   const [searchQuery, setSearchQuery] = useState('')
   const [txTypeFilter, setTxTypeFilter] = useState<'all' | 'income' | 'expense' | 'savings'>('all')

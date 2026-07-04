@@ -868,6 +868,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
             dreams={dreams} 
             transactions={transactions} 
             refreshDreamsAndTransactions={refreshDreamsAndTransactions}
+            onRequireAuth={requireAuth}
             toggleDreamStarLocally={toggleDreamStarLocally}
           />
         )}
@@ -879,6 +880,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
             transactions={transactions}
             categories={categories}
             refreshFixedExpenses={refreshFixedExpenses}
+            onRequireAuth={requireAuth}
             refreshTransactions={refreshTransactions}
           />
         )}
@@ -889,6 +891,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
             incomeSources={incomeSources}
             transactions={transactions}
             refreshIncomeSources={refreshIncomeSources}
+            onRequireAuth={requireAuth}
             refreshTransactions={refreshTransactions}
           />
         )}

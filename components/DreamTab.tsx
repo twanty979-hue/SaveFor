@@ -23,14 +23,13 @@ const ICON_MAP: Record<string, React.ElementType> = {
 
 const PRESET_ICONS = Object.keys(ICON_MAP)
 
-export default function DreamTab({
-  profile,
+export default function DreamTab({ profile, onRequireAuth,
   dreams,
   transactions,
   refreshDreamsAndTransactions,
   toggleDreamStarLocally
 }: {
-  profile: { id: string, display_name: string },
+  profile: { id: string, display_name: string }, onRequireAuth?: () => boolean,
   dreams: any[],
   transactions: any[],
   refreshDreamsAndTransactions: () => Promise<void>,
@@ -210,6 +209,7 @@ export default function DreamTab({
   }
 
   const handleDeleteDream = async (id: string) => {
+    if (onRequireAuth && !onRequireAuth()) return;
     setConfirmDialog({
       isOpen: true,
       title: 'ลบเป้าหมาย',

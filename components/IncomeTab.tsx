@@ -48,14 +48,13 @@ const RECEIVE_DAY_OPTIONS = [
   { label: 'สิ้นเดือน', value: 31 },
 ]
 
-export default function IncomeTab({
-  profile,
+export default function IncomeTab({ profile, onRequireAuth,
   incomeSources,
   transactions,
   refreshIncomeSources,
   refreshTransactions
 }: {
-  profile: { id: string, display_name: string },
+  profile: { id: string, display_name: string }, onRequireAuth?: () => boolean,
   incomeSources: any[],
   transactions: any[],
   refreshIncomeSources: () => Promise<void>,

@@ -36,15 +36,14 @@ const CATEGORY_COLORS: Record<string, string> = {
 
 const CATEGORIES = Object.keys(CATEGORY_MAP)
 
-export default function FixedExpensesTab({
-  profile,
+export default function FixedExpensesTab({ profile, onRequireAuth,
   fixedExpenses,
   transactions,
   categories,
   refreshFixedExpenses,
   refreshTransactions
 }: {
-  profile: { id: string, display_name: string },
+  profile: { id: string, display_name: string }, onRequireAuth?: () => boolean,
   fixedExpenses: any[],
   transactions: any[],
   categories: any[],
