@@ -40,7 +40,7 @@ const initialMessages: Message[] = [
     text: 'สวัสดีครับ 👋 พิมพ์รายการได้เลย เช่น "กาแฟ 50" หรือหลายรายการ เช่น "ข้าว 50 น้ำ 20" ครับ'
   }
 ]
-
+//asd
 export default function ChatUI({ profile }: { profile: { id: string, display_name: string } }) {
   const supabase = createClient()
   const [activeTab, setActiveTab] = useState<'chat' | 'plan' | 'income' | 'dream' | 'summary'>('chat')
