@@ -41,11 +41,22 @@ const initialMessages: Message[] = [
   }
 ]
 //asd
-export default function ChatUI({ profile }: { profile: { id: string, display_name: string } }) {
+import LoginModal from './LoginModal'
+
+export default function ChatUI({ profile }: { profile: { id: string, display_name: string } | null }) {
   const supabase = createClient()
   const [activeTab, setActiveTab] = useState<'chat' | 'plan' | 'income' | 'dream' | 'summary'>('chat')
   const [prevTab, setPrevTab] = useState<'chat' | 'plan' | 'income' | 'dream' | 'summary'>('chat')
   const [tabTransition, setTabTransition] = useState(false)
+  const [showLoginModal, setShowLoginModal] = useState(!profile)
+
+  const requireAuth = () => {
+    if (!profile) {
+      setShowLoginModal(true)
+      return false
+    }
+    return true
+  }
 
   const TAB_ORDER: Record<string, number> = { chat: 0, plan: 1, income: 2, dream: 3, summary: 4 }
 
@@ -80,11 +91,11 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
         { data: categoriesData },
         { data: txsData }
       ] = await Promise.all([
-        supabase.from('dreams').select('*').eq('user_id', profile.id).order('created_at', { ascending: false }),
-        supabase.from('fixed_expenses').select('*').eq('user_id', profile.id).order('due_day', { ascending: true }),
-        supabase.from('income_sources').select('*').eq('user_id', profile.id).order('receive_day', { ascending: true }),
-        supabase.from('categories').select('*').eq('user_id', profile.id),
-        supabase.from('transactions').select('*').eq('user_id', profile.id).order('transaction_date', { ascending: false })
+        supabase.from('dreams').select('*').eq('user_id', profile?.id).order('created_at', { ascending: false }),
+        supabase.from('fixed_expenses').select('*').eq('user_id', profile?.id).order('due_day', { ascending: true }),
+        supabase.from('income_sources').select('*').eq('user_id', profile?.id).order('receive_day', { ascending: true }),
+        supabase.from('categories').select('*').eq('user_id', profile?.id),
+        supabase.from('transactions').select('*').eq('user_id', profile?.id).order('transaction_date', { ascending: false })
       ])
 
       if (dreamsData) setDreams(dreamsData)
@@ -100,40 +111,44 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
   }
 
   const refreshDreamsAndTransactions = async () => {
+    if (!profile) return;
     const [
       { data: dreamsData },
       { data: txsData }
     ] = await Promise.all([
-      supabase.from('dreams').select('*').eq('user_id', profile.id).order('created_at', { ascending: false }),
-      supabase.from('transactions').select('*').eq('user_id', profile.id).order('transaction_date', { ascending: false })
+      supabase.from('dreams').select('*').eq('user_id', profile?.id).order('created_at', { ascending: false }),
+      supabase.from('transactions').select('*').eq('user_id', profile?.id).order('transaction_date', { ascending: false })
     ])
     if (dreamsData) setDreams(dreamsData)
     if (txsData) setTransactions(txsData)
   }
 
   const refreshFixedExpenses = async () => {
+    if (!profile) return;
     const { data } = await supabase
       .from('fixed_expenses')
       .select('*')
-      .eq('user_id', profile.id)
+      .eq('user_id', profile?.id)
       .order('due_day', { ascending: true })
     if (data) setFixedExpenses(data)
   }
 
   const refreshIncomeSources = async () => {
+    if (!profile) return;
     const { data } = await supabase
       .from('income_sources')
       .select('*')
-      .eq('user_id', profile.id)
+      .eq('user_id', profile?.id)
       .order('receive_day', { ascending: true })
     if (data) setIncomeSources(data)
   }
 
   const refreshTransactions = async () => {
+    if (!profile) return;
     const { data } = await supabase
       .from('transactions')
       .select('*')
-      .eq('user_id', profile.id)
+      .eq('user_id', profile?.id)
       .order('transaction_date', { ascending: false })
     if (data) setTransactions(data)
   }
@@ -299,7 +314,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
       const { data: categories } = await supabase
         .from('categories')
         .select('*')
-        .eq('user_id', profile.id)
+        .eq('user_id', profile?.id)
 
       const itemsToInsert = matches.map(match => {
         const name = match[1].trim()
@@ -309,7 +324,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
           c.name.toLowerCase().includes(name.toLowerCase())
         )
         return {
-          user_id: profile.id,
+          user_id: profile?.id,
           type: 'expense',
           amount: price,
           note: name,
@@ -420,7 +435,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
         const { data, error } = await supabase
           .from('transactions')
           .insert([{
-            user_id: profile.id,
+            user_id: profile?.id,
             type: 'income',
             amount,
             note: cleanNote,
@@ -483,7 +498,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
         )
 
         return {
-          user_id: profile.id,
+          user_id: profile?.id,
           type: 'expense',
           amount: price,
           note: name,
@@ -589,7 +604,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
               <User className="w-5 h-5 text-emerald-600" />
             </div>
             <div>
-              <h1 className="text-sm font-bold text-gray-800">{profile.display_name}</h1>
+              <h1 className="text-sm font-bold text-gray-800">{profile ? profile?.display_name : 'ผู้เยี่ยมชม (Guest)'}</h1>
               <div className="flex gap-2 text-[10px] text-gray-500 font-medium mt-0.5">
                 <span>วันนี้: <span className="text-amber-600 font-bold">฿{dailyTotal.toLocaleString()}</span></span>
                 <span className="text-gray-300">|</span>
@@ -846,7 +861,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
 
         {activeTab === 'dream' && (
           <DreamTab 
-            profile={profile} 
+            profile={profile || { id: 'guest', display_name: 'Guest' }} 
             dreams={dreams} 
             transactions={transactions} 
             refreshDreamsAndTransactions={refreshDreamsAndTransactions}
@@ -856,7 +871,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
 
         {activeTab === 'plan' && (
           <FixedExpensesTab 
-            profile={profile} 
+            profile={profile || { id: 'guest', display_name: 'Guest' }} 
             fixedExpenses={fixedExpenses}
             transactions={transactions}
             categories={categories}
@@ -867,7 +882,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
 
         {activeTab === 'income' && (
           <IncomeTab
-            profile={profile}
+            profile={profile || { id: 'guest', display_name: 'Guest' }}
             incomeSources={incomeSources}
             transactions={transactions}
             refreshIncomeSources={refreshIncomeSources}
@@ -877,7 +892,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
 
         {activeTab === 'summary' && (
           <SummaryTab 
-            profile={profile}
+            profile={profile || { id: 'guest', display_name: 'Guest' }}
             transactions={transactions}
             categories={categories}
           />

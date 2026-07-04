@@ -31,12 +31,8 @@ export async function middleware(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // Protect root page (and any other pages that shouldn't be accessible without auth)
-  if (!user && request.nextUrl.pathname === '/') {
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
-  }
+  // Protect root page (removed to allow guest view)
+  // if (!user && request.nextUrl.pathname === '/') { ... }
 
   // Redirect to root if already logged in and trying to access login
   if (user && request.nextUrl.pathname.startsWith('/login')) {

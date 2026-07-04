@@ -10,9 +10,9 @@ export default async function Home() {
     data: { user },
   } = await supabase.auth.getUser()
 
-  // If no user, redirect to login
+  // If no user, render ChatUI with null profile (Guest mode)
   if (!user) {
-    redirect('/login')
+    return <ChatUI profile={null} />
   }
 
   // Check if user has set up a profile
