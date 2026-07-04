@@ -1241,6 +1241,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
         )
       })()}
       </div>
+      <LoginModal isOpen={showLoginModal} onClose={() => setShowLoginModal(false)} />
     </div>
   )
 }
