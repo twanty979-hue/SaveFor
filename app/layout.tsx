@@ -13,8 +13,25 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "ตัวช่วยบันทึกรายรับรายจ่าย",
-  description: "บันทึกและติดตามรายรับรายจ่ายของคุณ",
+  metadataBase: new URL("https://twanty979-hue.github.io/SaveFor"),
+  title: "SaveFor - ตัวช่วยบันทึกและวางแผนการเงิน",
+  description: "บันทึกและติดตามรายรับรายจ่ายของคุณ วางแผนออมเงินอย่างชาญฉลาด",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "SaveFor",
+  },
+  formatDetection: {
+    telephone: false,
+  },
+  openGraph: {
+    title: "SaveFor - ตัวช่วยบันทึกและวางแผนการเงิน",
+    description: "บันทึกและติดตามรายรับรายจ่ายของคุณ วางแผนออมเงินอย่างชาญฉลาด",
+    url: "https://twanty979-hue.github.io/SaveFor", 
+    siteName: "SaveFor",
+    locale: "th_TH",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
