@@ -211,6 +211,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
   }
 
   const handleCancelExpense = async (messageId: string, transactionId: string | null) => {
+    if (!requireAuth()) return;
     if (!transactionId) return
 
     const { error } = await supabase
@@ -243,6 +244,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
   }
 
   const handleCancelUserMessage = async (messageId: string) => {
+    if (!requireAuth()) return;
     const msg = messages.find(m => m.id === messageId)
     if (!msg) return
 
@@ -290,6 +292,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
   }
 
   const handleEditUserMessage = async (messageId: string, newText: string) => {
+    if (!requireAuth()) return;
     const msg = messages.find(m => m.id === messageId)
     if (!msg) return
 
@@ -406,7 +409,7 @@ export default function ChatUI({ profile }: { profile: { id: string, display_nam
 
   const handleSend = async (e?: React.FormEvent) => {
     if (e) e.preventDefault()
-    
+    if (!requireAuth()) return;
     const text = inputText.trim()
     if (!text) return
 
